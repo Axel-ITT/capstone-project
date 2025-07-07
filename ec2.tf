@@ -1,3 +1,12 @@
+data "aws_ami" "linux_2023_latest" {
+  most_recent = true
+  owners = ["amazon"] # Or specify your own account ID or other owners
+  filter {
+    name   = "name"
+    values = ["al2023-ami-*-x86_64"]
+  }
+}
+
 resource "aws_security_group" "security-group" {
 
     name = "terraform-security-group"
@@ -35,8 +44,8 @@ resource "aws_security_group" "security-group" {
 }
 
 resource "aws_instance" "app_server" {
-  ami = var.ami_id
-  instance_type = "t2.micro"
+  ami = data.aws_ami.linux_2023_latest.id
+  instance_type = var.instance_type
   subnet_id = aws_subnet.public_subnet_1.id
   associate_public_ip_address = "true"
   vpc_security_group_ids = [ aws_security_group.security-group.id ]

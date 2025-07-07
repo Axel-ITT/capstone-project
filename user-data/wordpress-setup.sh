@@ -1,8 +1,7 @@
 #!/bin/bash
 sudo yum update -y
-sudo amazon-linux-extras enable php8.0 mariadb10.5
 sudo yum clean metadata
-sudo yum install -y php php-mysqlnd unzip httpd mariadb-server
+sudo yum install -y php php-mysqlnd unzip wget httpd mariadb105-server
 sudo systemctl start httpd
 sudo systemctl enable httpd
 sudo systemctl start mariadb

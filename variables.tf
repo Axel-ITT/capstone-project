@@ -1,8 +1,3 @@
-variable "ami_id" {
-  description = "AMI ID to use for EC2 instances"
-  type = string
-}
-
 variable "AZ-1" {
   description = "Valid AZ for launching t2.micro"
   type = string
