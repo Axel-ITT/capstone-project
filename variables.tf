@@ -1,6 +1,6 @@
-variable "AZ-1" {
-  description = "Valid AZ for launching t2.micro"
-  type = string
+variable "AZ-list" {
+  description = "List of AZ that should be deployed to"
+  type = list(string)
 }
 
 variable "wordpress_setup_filepath" {
