@@ -3,7 +3,7 @@ variable "AZ-list" {
   type = list(string)
 }
 
-variable "wordpress_setup_filepath" {
+variable "setup_filepath" {
   description = "User data for launching a wordpress server"
   type = string
 }

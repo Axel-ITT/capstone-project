@@ -36,17 +36,17 @@ resource "aws_security_group" "security-group" {
   }
 }
 
-resource "aws_instance" "app_server" {
+resource "aws_instance" "web_server" {
   count = length(var.AZ-list)
   ami = data.aws_ami.linux_2023_latest.id
   instance_type = var.instance_type
   subnet_id = aws_subnet.public[count.index].id
   associate_public_ip_address = "true"
   vpc_security_group_ids = [ aws_security_group.security-group.id ]
+  key_name = "vockey"
 
 
-
-  user_data = file(var.wordpress_setup_filepath)
+  user_data = file(var.setup_filepath)
   tags = {
     Name = "WebServerInstance"
   }
