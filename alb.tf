@@ -21,7 +21,7 @@ resource "aws_lb" "extractor_alb" {
   name               = "extractor-alb"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.security-group.id]
+  security_groups    = [aws_security_group.extractor_sg.id]
   subnets            = [for subnet in aws_subnet.public : subnet.id]
 
   tags = {
