@@ -14,3 +14,14 @@ provider "aws" {
   shared_credentials_files = ["$HOME/.aws/credentials"]
   region = "us-west-2"
 }
+
+module "templates_bucket" {
+  source        = "./modules/s3_bucket"
+  bucket_name   = "yt-extractor-template-7c5a4t"
+  force_destroy = true
+
+  tags = {
+    Name        = "Nodered Templates"
+    Environment = "Dev"
+  }
+}

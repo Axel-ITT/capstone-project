@@ -25,6 +25,8 @@ resource "aws_vpc_security_group_ingress_rule" "extractor_sg_ssh_ingress" {
   from_port = var.ssh_port
   to_port = var.ssh_port
   ip_protocol = "tcp"
+
+  depends_on = [aws_security_group.extractor_sg]
 }
 
 resource "aws_vpc_security_group_ingress_rule" "extractor_sg_http_ingress" {
@@ -35,6 +37,8 @@ resource "aws_vpc_security_group_ingress_rule" "extractor_sg_http_ingress" {
   from_port = var.http_port
   to_port = var.http_port
   ip_protocol = "tcp"
+
+  depends_on = [aws_security_group.extractor_sg]
 }
 
 resource "aws_vpc_security_group_egress_rule" "extractor_sg_egress" {
@@ -44,6 +48,8 @@ resource "aws_vpc_security_group_egress_rule" "extractor_sg_egress" {
   from_port = 0
   to_port = 0
   ip_protocol = "-1"
+
+  depends_on = [aws_security_group.extractor_sg]
 }
 
 #IAM s3 fetch permission?

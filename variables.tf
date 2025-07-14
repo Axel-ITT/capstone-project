@@ -13,6 +13,12 @@ variable "ip_address" {
   type = string
 }
 
+variable "bucket_name" {
+  type        = string
+  description = "The name of the S3 bucket"
+}
+
+
 variable "AZ-list" {
   description = "List of AZ that should be deployed to"
   type = list(string)
