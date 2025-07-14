@@ -67,6 +67,6 @@ resource "aws_instance" "web_server" {
     Name = "WebServerInstance"
   }
 
-  depends_on = [ aws_s3_object.flow ]
+  # depends_on = [ aws_s3_object.flow ]
 }
 

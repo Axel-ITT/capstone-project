@@ -15,13 +15,7 @@ provider "aws" {
   region = "us-west-2"
 }
 
-module "templates_bucket" {
-  source        = "./modules/s3_bucket"
-  bucket_name   = "yt-extractor-template-7c5a4t"
-  force_destroy = true
-
-  tags = {
-    Name        = "Nodered Templates"
-    Environment = "Dev"
-  }
+data "aws_s3_bucket" "existing_bucket" {
+  count  = var.skip_bucket_creation_if_exists ? 1 : 0
+  bucket = var.bucket_name
 }
