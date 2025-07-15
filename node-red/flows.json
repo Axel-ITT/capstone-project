@@ -1,0 +1,211 @@
+[
+    {
+        "id": "126d9a85ce590a39",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c893ad062fb20624",
+        "type": "tab",
+        "label": "Flow 2",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "fef9247121fa29e0",
+        "type": "http in",
+        "z": "126d9a85ce590a39",
+        "name": "",
+        "url": "/home",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 120,
+        "y": 100,
+        "wires": [
+            [
+                "3d159491305fb9c9"
+            ]
+        ]
+    },
+    {
+        "id": "df4ac026edba6cc2",
+        "type": "template",
+        "z": "126d9a85ce590a39",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<!DOCTYPE html>\n<html>\n  <head><title>Hello</title></head>\n  <body>\n    <h1>Welcome, {{payload.name}}!</h1>\n    <p>Time: {{payload.temp}}</p>\n  </body>\n</html>",
+        "output": "str",
+        "x": 440,
+        "y": 100,
+        "wires": [
+            [
+                "c58bf08d03152027"
+            ]
+        ]
+    },
+    {
+        "id": "c58bf08d03152027",
+        "type": "http response",
+        "z": "126d9a85ce590a39",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 630,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "3d159491305fb9c9",
+        "type": "function",
+        "z": "126d9a85ce590a39",
+        "name": "function 1",
+        "func": "msg.payload = { name: \"mysterious man!\" , time: msg.payload};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 280,
+        "y": 100,
+        "wires": [
+            [
+                "df4ac026edba6cc2"
+            ]
+        ]
+    },
+    {
+        "id": "2ac29f8dcd7dfb6e",
+        "type": "inject",
+        "z": "126d9a85ce590a39",
+        "d": true,
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 130,
+        "y": 200,
+        "wires": [
+            [
+                "3d159491305fb9c9"
+            ]
+        ]
+    },
+    {
+        "id": "1a1a1a1a1a1a1a1a",
+        "type": "http in",
+        "z": "c893ad062fb20624",
+        "name": "",
+        "url": "/check",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 170,
+        "y": 160,
+        "wires": [
+            [
+                "b2b2b2b2b2b2b2b2"
+            ]
+        ]
+    },
+    {
+        "id": "b2b2b2b2b2b2b2b2",
+        "type": "function",
+        "z": "c893ad062fb20624",
+        "name": "Set Data",
+        "func": "msg.payload = {\n    name: \"Visitor\",\n    temp: global.get(\"currentTemp\") || 0\n};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 340,
+        "y": 160,
+        "wires": [
+            [
+                "c3c3c3c3c3c3c3c3"
+            ]
+        ]
+    },
+    {
+        "id": "c3c3c3c3c3c3c3c3",
+        "type": "template",
+        "z": "c893ad062fb20624",
+        "name": "HTML Page",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<!DOCTYPE html>\n<html>\n<head>\n  <title>Node-RED Dynamic Page</title>\n  <meta http-equiv=\"refresh\" content=\"5\">\n</head>\n<body>\n  <h1>Welcome, {{payload.name}}!</h1>\n  <p>Temperature: {{payload.temp}} °C</p>\n</body>\n</html>",
+        "output": "str",
+        "x": 530,
+        "y": 160,
+        "wires": [
+            [
+                "d4d4d4d4d4d4d4d4"
+            ]
+        ]
+    },
+    {
+        "id": "d4d4d4d4d4d4d4d4",
+        "type": "http response",
+        "z": "c893ad062fb20624",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 720,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "e5e5e5e5e5e5e5e5",
+        "type": "inject",
+        "z": "c893ad062fb20624",
+        "name": "Simulate Temp",
+        "props": [],
+        "repeat": "5",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 170,
+        "y": 260,
+        "wires": [
+            [
+                "f6f6f6f6f6f6f6f6"
+            ]
+        ]
+    },
+    {
+        "id": "f6f6f6f6f6f6f6f6",
+        "type": "function",
+        "z": "c893ad062fb20624",
+        "name": "Set Temp",
+        "func": "let temp = Math.floor(Math.random() * 10) + 20;\nglobal.set(\"currentTemp\", temp);\nreturn null;",
+        "outputs": 0,
+        "noerr": 0,
+        "x": 370,
+        "y": 260,
+        "wires": []
+    }
+]
