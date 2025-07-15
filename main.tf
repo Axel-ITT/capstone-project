@@ -14,8 +14,3 @@ provider "aws" {
   shared_credentials_files = ["$HOME/.aws/credentials"]
   region = "us-west-2"
 }
-
-data "aws_s3_bucket" "existing_bucket" {
-  count  = var.skip_bucket_creation_if_exists ? 1 : 0
-  bucket = var.bucket_name
-}

@@ -25,3 +25,6 @@ override.tf.json
 
 #IDEs
 *.idea/*
+
+#Keyfiles for local dev
+keyfiles/

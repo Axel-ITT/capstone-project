@@ -18,6 +18,10 @@ variable "bucket_name" {
   description = "The name of the S3 bucket"
 }
 
+variable "key_path" {
+  type        = string
+  description = "Filepath for ssh key"
+}
 
 variable "AZ-list" {
   description = "List of AZ that should be deployed to"
@@ -37,7 +41,6 @@ variable "flows_filepath" {
 variable "instance_type" {
   description = "This describes the instance type"
   type = string
-  default = "t3.micro"
 }
 
 variable "ssh_port" {
@@ -57,3 +60,10 @@ variable "https_port" {
   type = number
   default = 8080
 }
+
+variable "skip_bucket_creation_if_exists" {
+  type        = bool
+  default     = true
+  description = "Skip bucket creation if it exists"
+}
+
