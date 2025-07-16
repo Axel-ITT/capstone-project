@@ -3,9 +3,6 @@
 
 yum update -y
 yum clean metadata
-yum install -y nginx --skip-broken
-sudo systemctl enable nginx
-sudo systemctl start nginx
 
 # Install NVM as ec2-user
 su - ec2-user -c "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash"

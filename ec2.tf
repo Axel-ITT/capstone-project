@@ -48,7 +48,7 @@ resource "null_resource" "flows_transfer" {
   provisioner "remote-exec" {
     inline = [
       "echo 'Waiting for instance to be ready...'",
-      "mkdir .node-red"
+      "mkdir .node-red",
       ]
   }
 
@@ -57,32 +57,11 @@ resource "null_resource" "flows_transfer" {
     destination = "/home/ec2-user/.node-red/flows.json"
   }
 
-
   provisioner "file" {
-    # Reverse proxy for http acess
-    source      = "${path.module}/node-red/nodered.conf"
-    destination = "/home/ec2-user/nodered.conf"
+    source      = "${path.module}/node-red/settings.js"
+    destination = "/home/ec2-user/.node-red/settings.js"
   }
 
-  provisioner "remote-exec" {
-    inline = [
-      # Make scripts executable
-      #"chmod +x /tmp/scripts/*.sh",
-      
-      # Activate reverse proxy for http acess
-      "sudo systemctl restart nginx",
-      
-      # Modify settings.js to disable editor
-      "SETTINGS_PATH='/home/ec2-user/.node-red/settings.js'",
-      "sed -i 's/^.*disableEditor:.*$/    disableEditor: true,/' $SETTINGS_PATH",
-      "sed -i 's/^.*httpAdminRoot:.*$/    httpAdminRoot: false,/' $SETTINGS_PATH",
-      # Execute your custom script
-      #"sudo /tmp/scripts/setup.sh",
-      
-      # Clean up
-      #"rm -rf /tmp/scripts"
-    ]
-  }
   # Trigger recreation if instance changes
   triggers = {
     instance_id = aws_instance.web_server[count.index].id
