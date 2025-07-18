@@ -18,6 +18,11 @@ variable "bucket_name" {
   description = "The name of the S3 bucket"
 }
 
+variable "ami_id" {
+  type        = string
+  description = "ID of ami to use"
+}
+
 variable "key_path" {
   type        = string
   description = "Filepath for ssh key"
