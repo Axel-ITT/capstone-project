@@ -28,3 +28,6 @@ override.tf.json
 
 #Keyfiles for local dev
 keyfiles/
+
+#Settings with credentials
+*settings.js

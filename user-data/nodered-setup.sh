@@ -16,6 +16,7 @@ su - ec2-user -c "
   npm install -g pm2
   npm install -g multer
   npm install -g --unsafe-perm node-red
+  npm install -g @flowfuse/node-red-dashboard
   pm2 start \$(which node-red) -- -v
   pm2 save
   pm2 startup systemd -u ec2-user --hp /home/ec2-user | tail -1 > /tmp/pm2-startup.sh

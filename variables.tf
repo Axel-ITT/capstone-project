@@ -13,9 +13,9 @@ variable "ip_address" {
   type = string
 }
 
-variable "bucket_name" {
+variable "ami_id" {
   type        = string
-  description = "The name of the S3 bucket"
+  description = "ID of ami to use"
 }
 
 variable "key_path" {
@@ -60,10 +60,3 @@ variable "https_port" {
   type = number
   default = 8080
 }
-
-variable "skip_bucket_creation_if_exists" {
-  type        = bool
-  default     = true
-  description = "Skip bucket creation if it exists"
-}
-
