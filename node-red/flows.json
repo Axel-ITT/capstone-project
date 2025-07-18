@@ -1,211 +1,102 @@
 [
     {
-        "id": "126d9a85ce590a39",
+        "id": "e8d61f6023d7a7ef",
         "type": "tab",
-        "label": "Flow 1",
+        "label": "YT Extractor Flow",
         "disabled": false,
-        "info": "",
-        "env": []
+        "info": ""
     },
     {
-        "id": "c893ad062fb20624",
-        "type": "tab",
-        "label": "Flow 2",
-        "disabled": false,
-        "info": "",
-        "env": []
-    },
-    {
-        "id": "fef9247121fa29e0",
+        "id": "586b85bdd9dedd5a",
         "type": "http in",
-        "z": "126d9a85ce590a39",
-        "name": "",
-        "url": "/home",
+        "z": "e8d61f6023d7a7ef",
+        "name": "Serve HTML",
+        "url": "/yt-extractor",
         "method": "get",
         "upload": false,
         "swaggerDoc": "",
-        "x": 120,
-        "y": 100,
+        "x": 140,
+        "y": 180,
         "wires": [
             [
-                "3d159491305fb9c9"
+                "d3d9e6d68cbd4816"
             ]
         ]
     },
     {
-        "id": "df4ac026edba6cc2",
+        "id": "d3d9e6d68cbd4816",
         "type": "template",
-        "z": "126d9a85ce590a39",
-        "name": "",
+        "z": "e8d61f6023d7a7ef",
+        "name": "HTML with Vue.js & Vuetify",
         "field": "payload",
         "fieldType": "msg",
-        "format": "handlebars",
-        "syntax": "mustache",
-        "template": "<!DOCTYPE html>\n<html>\n  <head><title>Hello</title></head>\n  <body>\n    <h1>Welcome, {{payload.name}}!</h1>\n    <p>Time: {{payload.temp}}</p>\n  </body>\n</html>",
+        "format": "html",
+        "syntax": "plain",
+        "template": "<!DOCTYPE html>\n<html>\n<head>\n  <title>YT Extractor</title>\n  <script src=\"https://cdn.jsdelivr.net/npm/vue@2\"></script>\n  <script src=\"https://cdn.jsdelivr.net/npm/vuetify@2.6.5/dist/vuetify.js\"></script>\n  <link href=\"https://cdn.jsdelivr.net/npm/vuetify@2.6.5/dist/vuetify.min.css\" rel=\"stylesheet\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <style>\n    body {\n      margin: 0;\n      padding: 0;\n      font-family: Arial, sans-serif;\n    }\n    #app {\n      display: flex;\n      justify-content: center;\n      align-items: center;\n      flex-direction: column;\n      min-height: 100vh;\n    }\n  </style>\n</head>\n<body>\n  <div id=\"app\">\n    <v-app>\n      <v-container>\n        <h1 class=\"text-center\">YT Extractor</h1>\n\n        <v-row justify=\"center\" class=\"mt-3\">\n          <v-col cols=\"12\" md=\"8\" lg=\"6\">\n            <v-text-field\n              v-model=\"inputText\"\n              label=\"Enter youtube link\"\n              placeholder=\"Enter youtube link\"\n              outlined\n              dense\n            ></v-text-field>\n          </v-col>\n          <v-btn color=\"primary\" class=\"ml-2\" @click=\"sanitizeInput\">Start!</v-btn>\n        </v-row>\n\n        <v-row justify=\"center\" class=\"mt-5\">\n          <h2>Sanitized input:</h2>\n        </v-row>\n\n        <v-row justify=\"center\" class=\"mt-2\">\n          <v-col cols=\"12\" md=\"8\" lg=\"6\">\n            <v-card class=\"pa-2\" outlined>\n              <div>{{ sanitizedResult }}</div>\n            </v-card>\n          </v-col>\n        </v-row>\n      </v-container>\n    </v-app>\n  </div>\n\n  <script>\n    const app = new Vue({\n      el: '#app',\n      vuetify: new Vuetify(),\n      data() {\n        return {\n          inputText: '',\n          sanitizedResult: ''\n        };\n      },\n      methods: {\n        sanitizeInput() {\n          // Send input to Node-RED backend for sanitization\n          fetch('/sanitize-input', {\n            method: 'POST',\n            headers: {\n              'Content-Type': 'application/json',\n            },\n            body: JSON.stringify({ input: this.inputText })\n          })\n            .then(response => response.json())\n            .then(data => {\n              this.sanitizedResult = data.sanitized;\n            })\n            .catch(error => {\n              this.sanitizedResult = \"Error processing input!\";\n              console.error('Error:', error);\n            });\n        }\n      }\n    });\n  </script>\n</body>\n</html>",
         "output": "str",
-        "x": 440,
-        "y": 100,
+        "x": 330,
+        "y": 180,
         "wires": [
             [
-                "c58bf08d03152027"
+                "85f626df5a636bf2"
             ]
         ]
     },
     {
-        "id": "c58bf08d03152027",
+        "id": "85f626df5a636bf2",
         "type": "http response",
-        "z": "126d9a85ce590a39",
+        "z": "e8d61f6023d7a7ef",
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 630,
-        "y": 100,
-        "wires": []
-    },
-    {
-        "id": "3d159491305fb9c9",
-        "type": "function",
-        "z": "126d9a85ce590a39",
-        "name": "function 1",
-        "func": "msg.payload = { name: \"mysterious man!\" , time: msg.payload};\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 280,
-        "y": 100,
-        "wires": [
-            [
-                "df4ac026edba6cc2"
-            ]
-        ]
-    },
-    {
-        "id": "2ac29f8dcd7dfb6e",
-        "type": "inject",
-        "z": "126d9a85ce590a39",
-        "d": true,
-        "name": "",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "5",
-        "crontab": "",
-        "once": true,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 130,
-        "y": 200,
-        "wires": [
-            [
-                "3d159491305fb9c9"
-            ]
-        ]
-    },
-    {
-        "id": "1a1a1a1a1a1a1a1a",
-        "type": "http in",
-        "z": "c893ad062fb20624",
-        "name": "",
-        "url": "/check",
-        "method": "get",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 170,
-        "y": 160,
-        "wires": [
-            [
-                "b2b2b2b2b2b2b2b2"
-            ]
-        ]
-    },
-    {
-        "id": "b2b2b2b2b2b2b2b2",
-        "type": "function",
-        "z": "c893ad062fb20624",
-        "name": "Set Data",
-        "func": "msg.payload = {\n    name: \"Visitor\",\n    temp: global.get(\"currentTemp\") || 0\n};\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "x": 340,
-        "y": 160,
-        "wires": [
-            [
-                "c3c3c3c3c3c3c3c3"
-            ]
-        ]
-    },
-    {
-        "id": "c3c3c3c3c3c3c3c3",
-        "type": "template",
-        "z": "c893ad062fb20624",
-        "name": "HTML Page",
-        "field": "payload",
-        "fieldType": "msg",
-        "format": "handlebars",
-        "syntax": "mustache",
-        "template": "<!DOCTYPE html>\n<html>\n<head>\n  <title>Node-RED Dynamic Page</title>\n  <meta http-equiv=\"refresh\" content=\"5\">\n</head>\n<body>\n  <h1>Welcome, {{payload.name}}!</h1>\n  <p>Temperature: {{payload.temp}} °C</p>\n</body>\n</html>",
-        "output": "str",
         "x": 530,
-        "y": 160,
-        "wires": [
-            [
-                "d4d4d4d4d4d4d4d4"
-            ]
-        ]
-    },
-    {
-        "id": "d4d4d4d4d4d4d4d4",
-        "type": "http response",
-        "z": "c893ad062fb20624",
-        "name": "",
-        "statusCode": "",
-        "headers": {},
-        "x": 720,
-        "y": 160,
+        "y": 180,
         "wires": []
     },
     {
-        "id": "e5e5e5e5e5e5e5e5",
-        "type": "inject",
-        "z": "c893ad062fb20624",
-        "name": "Simulate Temp",
-        "props": [],
-        "repeat": "5",
-        "crontab": "",
-        "once": true,
-        "onceDelay": 0.1,
-        "topic": "",
-        "x": 170,
-        "y": 260,
+        "id": "a7c02e0d68c6d038",
+        "type": "http in",
+        "z": "e8d61f6023d7a7ef",
+        "name": "Sanitize Input",
+        "url": "/sanitize-input",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 150,
+        "y": 320,
         "wires": [
             [
-                "f6f6f6f6f6f6f6f6"
+                "75d96e73098be0bc"
             ]
         ]
     },
     {
-        "id": "f6f6f6f6f6f6f6f6",
+        "id": "75d96e73098be0bc",
         "type": "function",
-        "z": "c893ad062fb20624",
-        "name": "Set Temp",
-        "func": "let temp = Math.floor(Math.random() * 10) + 20;\nglobal.set(\"currentTemp\", temp);\nreturn null;",
-        "outputs": 0,
+        "z": "e8d61f6023d7a7ef",
+        "name": "Sanitize Input Logic",
+        "func": "// Sanitize the input to prevent malicious code execution\nconst unsanitizedInput = msg.payload.input;\nconst sanitizedInput = unsanitizedInput\n  .replace(/[^a-zA-Z0-9:\\/._?&=-]/g, '') // Allow only safe characters\n  .trim();\n\n// Return sanitized input\nmsg.payload = {\n    sanitized: sanitizedInput\n};\nreturn msg;",
+        "outputs": 1,
         "noerr": 0,
-        "x": 370,
-        "y": 260,
+        "initialize": "",
+        "finalize": "",
+        "x": 360,
+        "y": 320,
+        "wires": [
+            [
+                "cd70dfcc5dabebaf"
+            ]
+        ]
+    },
+    {
+        "id": "cd70dfcc5dabebaf",
+        "type": "http response",
+        "z": "e8d61f6023d7a7ef",
+        "name": "Send Sanitized Input",
+        "statusCode": "",
+        "headers": {},
+        "x": 540,
+        "y": 320,
         "wires": []
     }
 ]
