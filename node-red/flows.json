@@ -124,7 +124,7 @@
         "fieldType": "msg",
         "format": "html",
         "syntax": "plain",
-        "template": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Load Game</title>\n    <style>\n        body {\n            font-family: Arial, sans-serif;\n            display: flex;\n            flex-direction: column;\n            align-items: center;\n            justify-content: center;\n            height: 100vh;\n            background-color: #f4f4f4;\n        }\n        button {\n            padding: 10px 20px;\n            margin: 10px;\n            font-size: 18px;\n            border: none;\n            color: white;\n            border-radius: 5px;\n            cursor: pointer;\n        }\n        #start {\n            background-color: #28a745;\n        }\n        #stop {\n            background-color: #dc3545;\n        }\n        #start:hover {\n            background-color: #218838;\n        }\n        #stop:hover {\n            background-color: #c82333;\n        }\n    </style>\n</head>\n<body>\n    <h1>Load Game</h1>\n    <div id=\"cpu-load\">Fetching CPU Load...</div>\n    <button id=\"start\" onclick=\"startStressTest()\">Start Stress Test</button>\n    <button id=\"stop\" onclick=\"stopStressTest()\">Stop Stress Test</button>\n    <script>\n        let timeout;\n        function startStressTest() {\n            fetch('/start-stress', { method: 'POST' })\n                .then(() => {\n                    alert('Stress test started, will stop automatically after 10 minutes.');\n                    timeout = setTimeout(stopStressTest, 10 * 60 * 1000); // 10 minutes timeout\n                })\n                .catch(error => alert('Error starting stress test: ' + error.message));\n        }\n\n        function stopStressTest() {\n            clearTimeout(timeout);\n            fetch('/stop-stress', { method: 'POST' })\n                .then(() => alert('Stress test stopped.'))\n                .catch(error => alert('Error stopping stress test: ' + error.message));\n        }\n\n        function fetchCpuLoad() {\n            fetch('/cpu-load')\n                .then(response => response.json())\n                .then(data => {\n                    document.getElementById('cpu-load').innerText = `Current CPU Load: ${data.cpuLoad}%`;\n                })\n                .catch(error => console.error('Error fetching CPU load:', error));\n        }\n\n        // Fetch CPU load every 5 seconds\n        setInterval(fetchCpuLoad, 5000);\n        fetchCpuLoad();\n    </script>\n</body>\n</html>",
+        "template": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Load Game</title>\n    <style>\n        body {\n            font-family: Arial, sans-serif;\n            display: flex;\n            flex-direction: column;\n            align-items: center;\n            justify-content: center;\n            height: 100vh;\n            background-color: #f4f4f4;\n        }\n        button {\n            padding: 10px 20px;\n            margin: 10px;\n            font-size: 18px;\n            border: none;\n            color: white;\n            border-radius: 5px;\n            cursor: pointer;\n        }\n        #start {\n            background-color: #28a745;\n        }\n        #stop {\n            background-color: #dc3545;\n        }\n        #start:hover {\n            background-color: #218838;\n        }\n        #stop:hover {\n            background-color: #c82333;\n        }\n    </style>\n</head>\n<body>\n    <h1>Load Game</h1>\n    <h3 id=\"az\">AZ: Fetching...</h3>\n    <h3 id=\"public-ip\">Public IP: Fetching...</h3>\n    <div id=\"cpu-load\">Fetching CPU Load...</div>\n    <button id=\"start\" onclick=\"startStressTest()\">Start Stress Test</button>\n    <button id=\"stop\" onclick=\"stopStressTest()\">Stop Stress Test</button>\n    <script>\n        let timeout;\n    function startStressTest() {\n        fetch('/start-stress', { method: 'POST' })\n            .then(() => {\n                console.log('Stress test started, will stop automatically after 10 minutes.');\n                timeout = setTimeout(stopStressTest, 10 * 60 * 1000); // 10 minutes timeout\n            })\n            .catch(error => console.log('Error starting stress test:', error.message));\n    }\n    function stopStressTest() {\n        clearTimeout(timeout);\n        fetch('/stop-stress', { method: 'POST' })\n            .then(() => console.log('Stress test stopped.'))\n            .catch(error => console.log('Error stopping stress test:', error.message));\n    }\n    function fetchCpuLoad() {\n        fetch('/cpu-load')\n            .then(response => response.json())\n            .then(data => {\n                document.getElementById('cpu-load').innerText = `Current CPU Load: ${data.cpuLoad}%`;\n            })\n            .catch(error => console.error('Error fetching CPU load:', error));\n    }\n    // Fetch CPU load every 5 seconds\n    setInterval(fetchCpuLoad, 5000);\n    fetchCpuLoad();\n\n    // Function to fetch metadata and update the page\n    function fetchMetadata() {\n    fetch('/ec2-metadata')\n        .then(response => response.json())\n        .then(data => {\n            if (data.availabilityZone) {\n                document.getElementById('az').innerText = `AZ: ${data.availabilityZone}`;\n            }\n            if (data.publicIp) {\n            document.getElementById('public-ip').innerText = `Public IP: ${data.publicIp}`;\n            }\n        })\n        .catch(error => {\n            console.error('Error fetching EC2 metadata:', error);\n        });\n    }\n    \n    // Fetch metadata on page load\n    fetchMetadata();\n    </script>\n</body>\n</html>",
         "x": 390,
         "y": 320,
         "wires": [
@@ -201,8 +201,8 @@
         "method": "post",
         "upload": false,
         "swaggerDoc": "",
-        "x": 180,
-        "y": 560,
+        "x": 130,
+        "y": 500,
         "wires": [
             [
                 "772367c4cdf6f775"
@@ -214,17 +214,45 @@
         "type": "function",
         "z": "1b4a4c28bfa23ee8",
         "name": "Start Stress Logic",
-        "func": "// Save start time for the stress test\nconst stressTestRunning = node.context().get('stressTestRunning') || false;\nif (!stressTestRunning) {\n    node.status({ fill: \"green\", shape: \"dot\", text: \"Stress test running\" });\n    node.context().set('stressTestRunning', true);\n\n    // Schedule an automatic stop after 10 minutes (600,000 ms)\n    setTimeout(() => {\n        node.context().set('stressTestRunning', false);\n        node.status({ fill: \"red\", shape: \"dot\", text: \"Stress test auto-stopped\" });\n    }, 10 * 60 * 1000);\n\n    msg.payload = { status: \"Stress test started.\" };\n} else {\n    msg.payload = { status: \"Stress test is already running.\" };\n}\nreturn msg;",
+        "func": "// Save the running state to the context\ncontext.set('stressTestRunning', true);\n\n// Send the shell command to the exec node\nmsg.payload = \"stress --cpu 2 --io 4 --timeout 30s\";\nreturn msg;\n",
         "outputs": 1,
+        "timeout": "",
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 410,
-        "y": 560,
+        "x": 390,
+        "y": 500,
         "wires": [
             [
+                "8b5422b55c7e874b"
+            ]
+        ]
+    },
+    {
+        "id": "8b5422b55c7e874b",
+        "type": "exec",
+        "z": "1b4a4c28bfa23ee8",
+        "command": "",
+        "addpay": "payload",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "Execute Stress Command",
+        "x": 630,
+        "y": 520,
+        "wires": [
+            [
+                "b21fe105abcd3f44",
                 "e74269b2fb167d4b"
+            ],
+            [
+                "111b47309fc5e94b"
+            ],
+            [
+                "e07428b5acf3eb6f"
             ]
         ]
     },
@@ -235,7 +263,58 @@
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 620,
+        "x": 850,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "b21fe105abcd3f44",
+        "type": "debug",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "Command Output",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 880,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "111b47309fc5e94b",
+        "type": "debug",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "Command Errors",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 880,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "e07428b5acf3eb6f",
+        "type": "debug",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "Exit Code",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 880,
         "y": 560,
         "wires": []
     },
@@ -248,8 +327,8 @@
         "method": "post",
         "upload": false,
         "swaggerDoc": "",
-        "x": 180,
-        "y": 660,
+        "x": 140,
+        "y": 560,
         "wires": [
             [
                 "bf7c25828b495613"
@@ -261,29 +340,64 @@
         "type": "function",
         "z": "1b4a4c28bfa23ee8",
         "name": "Stop Stress Logic",
-        "func": "// Logic to stop the stress test\n\nnode.status({ fill: \"red\", shape: \"dot\", text: \"Stress test stopped\" });\nnode.context().set('stressTestRunning', false);\n\nmsg.payload = { status: \"Stress test stopped.\" };\nreturn msg;",
+        "func": "// Kill the stress process by running 'pkill stress'\nmsg.payload = \"pkill stress\";\ncontext.set('stressTestRunning', false);\nnode.status({ fill: \"red\", shape: \"dot\", text: \"Stress command stopped\" });\nreturn msg;\n",
         "outputs": 1,
+        "timeout": "",
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 410,
-        "y": 660,
+        "x": 390,
+        "y": 560,
         "wires": [
             [
-                "b922e87db66e4d3f"
+                "8b5422b55c7e874b"
             ]
         ]
     },
     {
-        "id": "b922e87db66e4d3f",
+        "id": "ec2-metadata",
+        "type": "http in",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "EC2 Metadata Endpoint",
+        "url": "/ec2-metadata",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 720,
+        "wires": [
+            [
+                "fetch-metadata"
+            ]
+        ]
+    },
+    {
+        "id": "fetch-metadata",
+        "type": "function",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "Get EC2 Metadata",
+        "func": "const http = require('http');\n\nfunction fetchMetadata(path, callback) {\n    const options = {\n        hostname: '169.254.169.254',\n        port: 80,\n        path: `/latest/meta-data/${path}`,\n        method: 'GET',\n    };\n\n    const req = http.request(options, (res) => {\n        let data = '';\n\n        res.on('data', (chunk) => {\n            data += chunk;\n        });\n\n        res.on('end', () => {\n            callback(null, data);\n        });\n    });\n\n    req.on('error', (e) => {\n        callback(e);\n    });\n\n    req.end();\n}\n\nconst promises = [\n    new Promise((resolve) => fetchMetadata('placement/availability-zone', resolve)),\n    new Promise((resolve) => fetchMetadata('public-ipv4', resolve))\n];\n\nPromise.all(promises)\n    .then(([az, ip]) => {\n        msg.payload = {\n            availabilityZone: az,\n            publicIp: ip,\n        };\n        node.send(msg);\n    })\n    .catch((error) => {\n        msg.payload = { error: error.message };\n        node.send(msg);\n    });\n\nreturn null;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "x": 410,
+        "y": 720,
+        "wires": [
+            [
+                "ec2-metadata-response"
+            ]
+        ]
+    },
+    {
+        "id": "ec2-metadata-response",
         "type": "http response",
         "z": "1b4a4c28bfa23ee8",
         "name": "",
         "statusCode": "",
         "headers": {},
         "x": 620,
-        "y": 660,
+        "y": 720,
         "wires": []
     }
 ]

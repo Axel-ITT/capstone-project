@@ -6,7 +6,7 @@ yum clean metadata
 
 # Install Nginx
 sudo amazon-linux-extras install nginx1.12 -y
-sudo yum install -y nginx
+sudo yum install -y nginx stress
 
 # Configure Nginx to redirect traffic from port 80 to port 8080 (node-red)
 cat <<EOT > /etc/nginx/conf.d/redirect.conf
