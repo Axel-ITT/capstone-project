@@ -4,6 +4,31 @@
 yum update -y
 yum clean metadata
 
+# Install Nginx
+sudo amazon-linux-extras install nginx1.12 -y
+sudo yum install -y nginx
+
+# Configure Nginx to redirect traffic from port 80 to port 8080 (node-red)
+cat <<EOT > /etc/nginx/conf.d/redirect.conf
+server {
+    listen 80;
+    server_name _;
+    
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+}
+EOT
+
+# Start and enable Nginx
+sudo systemctl enable nginx
+sudo systemctl start nginx
+
+
 # Install NVM as ec2-user
 su - ec2-user -c "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash"
 

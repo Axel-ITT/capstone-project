@@ -1,102 +1,289 @@
 [
     {
-        "id": "e8d61f6023d7a7ef",
+        "id": "1b4a4c28bfa23ee8",
         "type": "tab",
-        "label": "YT Extractor Flow",
+        "label": "Games Flow",
         "disabled": false,
         "info": ""
     },
     {
-        "id": "586b85bdd9dedd5a",
+        "id": "352a9831f5c32eda",
         "type": "http in",
-        "z": "e8d61f6023d7a7ef",
-        "name": "Serve HTML",
-        "url": "/yt-extractor",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "Homepage (Games)",
+        "url": "/games",
         "method": "get",
         "upload": false,
         "swaggerDoc": "",
-        "x": 140,
-        "y": 180,
+        "x": 160,
+        "y": 80,
         "wires": [
             [
-                "d3d9e6d68cbd4816"
+                "73d85a72b8e324c6"
             ]
         ]
     },
     {
-        "id": "d3d9e6d68cbd4816",
+        "id": "73d85a72b8e324c6",
         "type": "template",
-        "z": "e8d61f6023d7a7ef",
-        "name": "HTML with Vue.js & Vuetify",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "Homepage Template",
         "field": "payload",
         "fieldType": "msg",
         "format": "html",
-        "syntax": "plain",
-        "template": "<!DOCTYPE html>\n<html>\n<head>\n  <title>YT Extractor</title>\n  <script src=\"https://cdn.jsdelivr.net/npm/vue@2\"></script>\n  <script src=\"https://cdn.jsdelivr.net/npm/vuetify@2.6.5/dist/vuetify.js\"></script>\n  <link href=\"https://cdn.jsdelivr.net/npm/vuetify@2.6.5/dist/vuetify.min.css\" rel=\"stylesheet\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <style>\n    body {\n      margin: 0;\n      padding: 0;\n      font-family: Arial, sans-serif;\n    }\n    #app {\n      display: flex;\n      justify-content: center;\n      align-items: center;\n      flex-direction: column;\n      min-height: 100vh;\n    }\n  </style>\n</head>\n<body>\n  <div id=\"app\">\n    <v-app>\n      <v-container>\n        <h1 class=\"text-center\">YT Extractor</h1>\n\n        <v-row justify=\"center\" class=\"mt-3\">\n          <v-col cols=\"12\" md=\"8\" lg=\"6\">\n            <v-text-field\n              v-model=\"inputText\"\n              label=\"Enter youtube link\"\n              placeholder=\"Enter youtube link\"\n              outlined\n              dense\n            ></v-text-field>\n          </v-col>\n          <v-btn color=\"primary\" class=\"ml-2\" @click=\"sanitizeInput\">Start!</v-btn>\n        </v-row>\n\n        <v-row justify=\"center\" class=\"mt-5\">\n          <h2>Sanitized input:</h2>\n        </v-row>\n\n        <v-row justify=\"center\" class=\"mt-2\">\n          <v-col cols=\"12\" md=\"8\" lg=\"6\">\n            <v-card class=\"pa-2\" outlined>\n              <div>{{ sanitizedResult }}</div>\n            </v-card>\n          </v-col>\n        </v-row>\n      </v-container>\n    </v-app>\n  </div>\n\n  <script>\n    const app = new Vue({\n      el: '#app',\n      vuetify: new Vuetify(),\n      data() {\n        return {\n          inputText: '',\n          sanitizedResult: ''\n        };\n      },\n      methods: {\n        sanitizeInput() {\n          // Send input to Node-RED backend for sanitization\n          fetch('/sanitize-input', {\n            method: 'POST',\n            headers: {\n              'Content-Type': 'application/json',\n            },\n            body: JSON.stringify({ input: this.inputText })\n          })\n            .then(response => response.json())\n            .then(data => {\n              this.sanitizedResult = data.sanitized;\n            })\n            .catch(error => {\n              this.sanitizedResult = \"Error processing input!\";\n              console.error('Error:', error);\n            });\n        }\n      }\n    });\n  </script>\n</body>\n</html>",
-        "output": "str",
-        "x": 330,
-        "y": 180,
+        "syntax": "mustache",
+        "template": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Games</title>\n    <style>\n        body {\n            font-family: Arial, sans-serif;\n            display: flex;\n            flex-direction: column;\n            align-items: center;\n            justify-content: center;\n            height: 100vh;\n            margin: 0;\n            background-color: #f4f4f4;\n        }\n        h1 {\n            margin-bottom: 30px;\n        }\n        button {\n            display: block;\n            width: 200px;\n            padding: 10px;\n            margin: 10px;\n            font-size: 18px;\n            cursor: pointer;\n            border: none;\n            border-radius: 5px;\n            background-color: #007bff;\n            color: white;\n        }\n        button:hover {\n            background-color: #0056b3;\n        }\n    </style>\n</head>\n<body>\n    <h1>Games</h1>\n    <button onclick=\"window.location.href='/snake-game'\">Snake Game</button>\n    <button onclick=\"window.location.href='/load-game'\">Load Game</button>\n</body>\n</html>",
+        "x": 370,
+        "y": 80,
         "wires": [
             [
-                "85f626df5a636bf2"
+                "65a6bace94b04229"
             ]
         ]
     },
     {
-        "id": "85f626df5a636bf2",
+        "id": "65a6bace94b04229",
         "type": "http response",
-        "z": "e8d61f6023d7a7ef",
+        "z": "1b4a4c28bfa23ee8",
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 530,
+        "x": 600,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "14c52c17adb40196",
+        "type": "http in",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "Snake Page",
+        "url": "/snake-game",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 150,
+        "y": 180,
+        "wires": [
+            [
+                "cde46634c7178c83"
+            ]
+        ]
+    },
+    {
+        "id": "cde46634c7178c83",
+        "type": "template",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "snake template",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "javascript",
+        "syntax": "mustache",
+        "template": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>2048 Game</title>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/hammer.js/1.0.6/hammer.min.js\"></script>\n    <style>\n        body {\n        text-align:center;\n        font-family: helvetica;\n        }\n        canvas {\n        border: 2px solid rgb(151, 149, 149);\n        }\n    </style>\n</head>\n<body>\n<h3>Simple Snake Game</h3>\n<canvas id=\"stage\" height=\"400\" width=\"520\"></canvas>\n    <script type=\"module\">\n/**\n* Namespace\n*/\nvar Game = Game || {};\nvar Keyboard = Keyboard || {};\nvar Component = Component || {};\n\n/**\n* Keyboard Map\n*/\nKeyboard.Keymap = {\n37: 'left',\n38: 'up',\n39: 'right',\n40: 'down'\n};\n\n/**\n* Keyboard Events\n*/\nKeyboard.ControllerEvents = function () {\n\n    // Setts\n    var self = this;\n    this.pressKey = null;\n    this.keymap = Keyboard.Keymap;\n    \n    // Keydown Event\n    document.onkeydown = function (event) {\n    self.pressKey = event.which;\n    };\n    \n    // Get Key\n    this.getKey = function () {\n    return this.keymap[this.pressKey];\n    };\n};\n\n/**\n* Game Component Stage\n*/\nComponent.Stage = function (canvas, conf) {\n\n// Sets\nthis.keyEvent = new Keyboard.ControllerEvents();\nthis.width = canvas.width;\nthis.height = canvas.height;\nthis.length = [];\nthis.food = {};\nthis.score = 0;\nthis.direction = 'right';\nthis.conf = {\ncw: 10,\nsize: 5,\nfps: 1000\n};\n\n// Merge Conf\nif (typeof conf == 'object') {\nfor (var key in conf) {\nif (conf.hasOwnProperty(key)) {\nthis.conf[key] = conf[key];\n}\n}\n}\n\n};\n\n/**\n* Game Component Snake\n*/\nComponent.Snake = function (canvas, conf) {\n\n// Game Stage\nthis.stage = new Component.Stage(canvas, conf);\n\n// Init Snake\nthis.initSnake = function () {\n\n// Itaration in Snake Conf Size\nfor (var i = 0; i < this.stage.conf.size; i++) { \n    // Add Snake Cells \n    this.stage.length.push({ x: i, y: 0 }); } }; \n// Call init Snake \nthis.initSnake(); \n// Init Food \nthis.initFood=function () { \n    // Add food on stage \n    this.stage.food={ x:\n    Math.round(Math.random() * (this.stage.width - this.stage.conf.cw) / this.stage.conf.cw), y:\n    Math.round(Math.random() * (this.stage.height - this.stage.conf.cw) / this.stage.conf.cw), \n    };\n}; \n    // Init Food\n    this.initFood(); \n    // Restart Stage \n    this.restart=function () { this.stage.length=[]; this.stage.food={};\n    this.stage.score=0; this.stage.direction='right' ; this.stage.keyEvent.pressKey=null; this.initSnake();\n    this.initFood(); }; \n    }; \n    /** * Game Draw */ \n    Game.Draw=function (context, snake) { \n    // Draw Stage\n    this.drawStage=function () { \n    // Check Keypress And Set Stage direction \n    var keyPress=snake.stage.keyEvent.getKey();\n    if (typeof (keyPress) !='undefined' ) { snake.stage.direction=keyPress; } \n    // Draw White Stage\n    context.fillStyle=\"white\" ; context.fillRect(0, 0, snake.stage.width, snake.stage.height); \n    // Snake Position \n    var nx=snake.stage.length[0].x; \n    var ny=snake.stage.length[0].y; \n    // Add position by stage direction \n    switch (snake.stage.direction) { \n        case 'right' : nx++; break; \n        case 'left' : nx--; break; \n        case 'up' : ny--; break;\n        case 'down' : ny++; break; \n    } \n    // Check Collision \n    if (this.collision(nx, ny)==true) { snake.restart(); return; } \n    //Logic of Snake food \n    if (nx==snake.stage.food.x && ny==snake.stage.food.y) { var tail={ x: nx, y: ny };\n    snake.stage.score++; snake.initFood(); } else { var tail=snake.stage.length.pop(); tail.x=nx; tail.y=ny; }\n    snake.stage.length.unshift(tail); \n    // Draw Snake \n    for (var i=0; i < snake.stage.length.length; i++) { var\n    cell=snake.stage.length[i]; this.drawCell(cell.x, cell.y); } \n    // Draw Food \n    this.drawCell(snake.stage.food.x, snake.stage.food.y); \n    // Draw Score \n    context.fillText('Score: ' + snake.stage.score, 5, (snake.stage.height - 5));\n  };\n\n  // Draw Cell\n  this.drawCell = function (x, y) {\n    context.fillStyle = ' rgb(170, 170, 170)'; \n    context.beginPath(); context.arc((x * snake.stage.conf.cw + 6), (y *\n    snake.stage.conf.cw + 6), 4, 0, 2 * Math.PI, false); context.fill(); }; \n    // Check Collision with walls\n    this.collision=function (nx, ny) { if (nx==-1 || nx==(snake.stage.width / snake.stage.conf.cw) || ny==-1 ||\n    ny==(snake.stage.height / snake.stage.conf.cw)) { return true; } return false; } }; /** * Game Snake */\n    Game.Snake=function (elementId, conf) { \n        // Sets \n        var canvas=document.getElementById(elementId); \n        var context=canvas.getContext(\"2d\"); var snake=new Component.Snake(canvas, conf); var gameDraw=new Game.Draw(context,\n    snake); \n    // Game Interval \n    setInterval(function () { gameDraw.drawStage(); }, snake.stage.conf.fps); }; \n    /** * Window\n    Load */ \n    window.onload=function () { var snake=new Game.Snake('stage', { fps: 100, size: 4 }); };\n    </script>\n</body>\n</html>",
+        "x": 380,
+        "y": 180,
+        "wires": [
+            [
+                "c113c1a4f09f0fe1"
+            ]
+        ]
+    },
+    {
+        "id": "c113c1a4f09f0fe1",
+        "type": "http response",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 600,
         "y": 180,
         "wires": []
     },
     {
-        "id": "a7c02e0d68c6d038",
+        "id": "5aa82a8f48e5fd13",
         "type": "http in",
-        "z": "e8d61f6023d7a7ef",
-        "name": "Sanitize Input",
-        "url": "/sanitize-input",
-        "method": "post",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "Load Game Page",
+        "url": "/load-game",
+        "method": "get",
         "upload": false,
         "swaggerDoc": "",
-        "x": 150,
+        "x": 180,
         "y": 320,
         "wires": [
             [
-                "75d96e73098be0bc"
+                "c9b8d21c15076e91"
             ]
         ]
     },
     {
-        "id": "75d96e73098be0bc",
+        "id": "c9b8d21c15076e91",
+        "type": "template",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "Load Game Template",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "html",
+        "syntax": "plain",
+        "template": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Load Game</title>\n    <style>\n        body {\n            font-family: Arial, sans-serif;\n            display: flex;\n            flex-direction: column;\n            align-items: center;\n            justify-content: center;\n            height: 100vh;\n            background-color: #f4f4f4;\n        }\n        button {\n            padding: 10px 20px;\n            margin: 10px;\n            font-size: 18px;\n            border: none;\n            color: white;\n            border-radius: 5px;\n            cursor: pointer;\n        }\n        #start {\n            background-color: #28a745;\n        }\n        #stop {\n            background-color: #dc3545;\n        }\n        #start:hover {\n            background-color: #218838;\n        }\n        #stop:hover {\n            background-color: #c82333;\n        }\n    </style>\n</head>\n<body>\n    <h1>Load Game</h1>\n    <div id=\"cpu-load\">Fetching CPU Load...</div>\n    <button id=\"start\" onclick=\"startStressTest()\">Start Stress Test</button>\n    <button id=\"stop\" onclick=\"stopStressTest()\">Stop Stress Test</button>\n    <script>\n        let timeout;\n        function startStressTest() {\n            fetch('/start-stress', { method: 'POST' })\n                .then(() => {\n                    alert('Stress test started, will stop automatically after 10 minutes.');\n                    timeout = setTimeout(stopStressTest, 10 * 60 * 1000); // 10 minutes timeout\n                })\n                .catch(error => alert('Error starting stress test: ' + error.message));\n        }\n\n        function stopStressTest() {\n            clearTimeout(timeout);\n            fetch('/stop-stress', { method: 'POST' })\n                .then(() => alert('Stress test stopped.'))\n                .catch(error => alert('Error stopping stress test: ' + error.message));\n        }\n\n        function fetchCpuLoad() {\n            fetch('/cpu-load')\n                .then(response => response.json())\n                .then(data => {\n                    document.getElementById('cpu-load').innerText = `Current CPU Load: ${data.cpuLoad}%`;\n                })\n                .catch(error => console.error('Error fetching CPU load:', error));\n        }\n\n        // Fetch CPU load every 5 seconds\n        setInterval(fetchCpuLoad, 5000);\n        fetchCpuLoad();\n    </script>\n</body>\n</html>",
+        "x": 390,
+        "y": 320,
+        "wires": [
+            [
+                "fea1d5c496b27197"
+            ]
+        ]
+    },
+    {
+        "id": "fea1d5c496b27197",
+        "type": "http response",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 620,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "0fd1c27211f4b054",
+        "type": "http in",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "CPU Load Endpoint",
+        "url": "/cpu-load",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 170,
+        "y": 420,
+        "wires": [
+            [
+                "8fcdbab311bbc2e5"
+            ]
+        ]
+    },
+    {
+        "id": "8fcdbab311bbc2e5",
         "type": "function",
-        "z": "e8d61f6023d7a7ef",
-        "name": "Sanitize Input Logic",
-        "func": "// Sanitize the input to prevent malicious code execution\nconst unsanitizedInput = msg.payload.input;\nconst sanitizedInput = unsanitizedInput\n  .replace(/[^a-zA-Z0-9:\\/._?&=-]/g, '') // Allow only safe characters\n  .trim();\n\n// Return sanitized input\nmsg.payload = {\n    sanitized: sanitizedInput\n};\nreturn msg;",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "Get CPU Load",
+        "func": "const os = global.get('os'); // Access the os module.\n\nfunction getCpuLoad() {\n    const cpus = os.cpus();\n    let idle = 0;\n    let total = 0;\n\n    for (let cpu of cpus) {\n        for (let type in cpu.times) {\n            total += cpu.times[type];\n        }\n        idle += cpu.times.idle;\n    }\n\n    return 100 - Math.round((idle / total) * 100);\n}\n\nmsg.payload = { cpuLoad: getCpuLoad() };\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 420,
+        "wires": [
+            [
+                "eebf07e65c504234"
+            ]
+        ]
+    },
+    {
+        "id": "eebf07e65c504234",
+        "type": "http response",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 620,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "237495db1f3ba3c2",
+        "type": "http in",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "Start Stress Test",
+        "url": "/start-stress",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 560,
+        "wires": [
+            [
+                "772367c4cdf6f775"
+            ]
+        ]
+    },
+    {
+        "id": "772367c4cdf6f775",
+        "type": "function",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "Start Stress Logic",
+        "func": "// Save start time for the stress test\nconst stressTestRunning = node.context().get('stressTestRunning') || false;\nif (!stressTestRunning) {\n    node.status({ fill: \"green\", shape: \"dot\", text: \"Stress test running\" });\n    node.context().set('stressTestRunning', true);\n\n    // Schedule an automatic stop after 10 minutes (600,000 ms)\n    setTimeout(() => {\n        node.context().set('stressTestRunning', false);\n        node.status({ fill: \"red\", shape: \"dot\", text: \"Stress test auto-stopped\" });\n    }, 10 * 60 * 1000);\n\n    msg.payload = { status: \"Stress test started.\" };\n} else {\n    msg.payload = { status: \"Stress test is already running.\" };\n}\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
-        "x": 360,
-        "y": 320,
+        "libs": [],
+        "x": 410,
+        "y": 560,
         "wires": [
             [
-                "cd70dfcc5dabebaf"
+                "e74269b2fb167d4b"
             ]
         ]
     },
     {
-        "id": "cd70dfcc5dabebaf",
+        "id": "e74269b2fb167d4b",
         "type": "http response",
-        "z": "e8d61f6023d7a7ef",
-        "name": "Send Sanitized Input",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 540,
-        "y": 320,
+        "x": 620,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "0c9086fd0cei2371",
+        "type": "http in",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "Stop Stress Test",
+        "url": "/stop-stress",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 660,
+        "wires": [
+            [
+                "bf7c25828b495613"
+            ]
+        ]
+    },
+    {
+        "id": "bf7c25828b495613",
+        "type": "function",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "Stop Stress Logic",
+        "func": "// Logic to stop the stress test\n\nnode.status({ fill: \"red\", shape: \"dot\", text: \"Stress test stopped\" });\nnode.context().set('stressTestRunning', false);\n\nmsg.payload = { status: \"Stress test stopped.\" };\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 660,
+        "wires": [
+            [
+                "b922e87db66e4d3f"
+            ]
+        ]
+    },
+    {
+        "id": "b922e87db66e4d3f",
+        "type": "http response",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 620,
+        "y": 660,
         "wires": []
     }
 ]
