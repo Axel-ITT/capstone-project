@@ -13,6 +13,12 @@ cat <<EOT > /etc/nginx/conf.d/redirect.conf
 server {
     listen 80;
     server_name _;
+
+    # Redirect "/" to "/games"
+    location = / {
+        return 301 /games;
+    }
+
     
     location / {
         proxy_pass http://127.0.0.1:8080;

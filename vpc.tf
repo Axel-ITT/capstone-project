@@ -1,5 +1,5 @@
 resource "aws_vpc" "extractor_vpc" {
-  cidr_block = "10.0.0.0/16"
+  cidr_block = "10.0.0.0/25"
   
   tags = {
     Name = "extractor-vpc"
@@ -9,7 +9,7 @@ resource "aws_vpc" "extractor_vpc" {
 resource "aws_subnet" "public" {
   count = length(var.AZ-list)
   vpc_id = aws_vpc.extractor_vpc.id
-  cidr_block = cidrsubnet("10.0.0.0/24", 1, count.index)
+  cidr_block = cidrsubnet("10.0.0.0/27", 1, count.index)
   availability_zone = var.AZ-list[count.index]
   map_public_ip_on_launch=true
   

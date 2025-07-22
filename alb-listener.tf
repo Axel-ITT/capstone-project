@@ -28,13 +28,13 @@ resource "aws_lb_listener_rule" "rule_b" {
 
   condition {
     path_pattern {
-      values = ["/images*"]
+      values = ["/load-game*"]
     }
   }
 
   tags = {
     Environment = var.environment
-    Purpose     = "Images Route Rule"
+    Purpose     = "Load Game Route Rule"
   }
 
 }
