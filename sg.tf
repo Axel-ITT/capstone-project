@@ -10,7 +10,7 @@ resource "aws_security_group" "extractor_sg" {
 
 resource "aws_vpc_security_group_ingress_rule" "extractor_sg_ssh_ingress" {
   security_group_id = aws_security_group.extractor_sg.id
-  cidr_ipv4   = var.ip_address #Limit SSH for PROD (Session Manager unavailable in AWS Labs)
+  cidr_ipv4   = var.ssh_address_range #Limit SSH for PROD (Session Manager unavailable in AWS Labs)
 
   description = "SSH"
   from_port = var.ssh_port

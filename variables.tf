@@ -8,8 +8,8 @@ variable "environment" {
   type = string
 }
 
-variable "ip_address" {
-  description = "IP address"
+variable "ssh_address_range" {
+  description = "Range of allowed ssh/scp adresses"
   type = string
 }
 
