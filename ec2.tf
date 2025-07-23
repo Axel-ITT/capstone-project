@@ -53,7 +53,7 @@ resource "null_resource" "flows_transfer" {
   }
 
   provisioner "file" {
-    source      = "${path.module}/node-red/flows.json"
+    source      = "${path.module}/node-red/${count.index}/flows.json"
     destination = "/home/ec2-user/.node-red/flows.json"
   }
 

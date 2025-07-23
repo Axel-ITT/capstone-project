@@ -32,7 +32,7 @@
         "fieldType": "msg",
         "format": "html",
         "syntax": "mustache",
-        "template": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Games</title>\n    <style>\n        body {\n            font-family: Arial, sans-serif;\n            display: flex;\n            flex-direction: column;\n            align-items: center;\n            justify-content: center;\n            height: 100vh;\n            margin: 0;\n            background-color: #f4f4f4;\n        }\n        h1 {\n            margin-bottom: 30px;\n        }\n        button {\n            display: block;\n            width: 200px;\n            padding: 10px;\n            margin: 10px;\n            font-size: 18px;\n            cursor: pointer;\n            border: none;\n            border-radius: 5px;\n            background-color: #007bff;\n            color: white;\n        }\n        button:hover {\n            background-color: #0056b3;\n        }\n    </style>\n</head>\n<body>\n    <h1>Games</h1>\n    <button onclick=\"window.location.href='/snake-game'\">Snake Game</button>\n    <button onclick=\"window.location.href='/load-game'\">Load Game</button>\n</body>\n</html>",
+        "template": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Games</title>\n    <style>\n        body {\n            font-family: Arial, sans-serif;\n            display: flex;\n            flex-direction: column;\n            align-items: center;\n            justify-content: center;\n            height: 100vh;\n            margin: 0;\n            background-color: #f4f4f4;\n        }\n        h1 {\n            margin-bottom: 30px;\n        }\n        button {\n            display: block;\n            width: 200px;\n            padding: 10px;\n            margin: 10px;\n            font-size: 18px;\n            cursor: pointer;\n            border: none;\n            border-radius: 5px;\n            background-color: #007bff;\n            color: white;\n        }\n        button:hover {\n            background-color: #0056b3;\n        }\n    </style>\n</head>\n<body>\n    <h1>Games</h1>\n    <h3 id=\"az\">AZ:us-west-2b</h3>\n    <button onclick=\"window.location.href='/snake-game'\">Snake Game</button>\n    <button onclick=\"window.location.href='/load-game'\">Load Game</button>\n</body>\n</html>",
         "x": 370,
         "y": 80,
         "wires": [
@@ -124,7 +124,7 @@
         "fieldType": "msg",
         "format": "html",
         "syntax": "plain",
-        "template": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Load Game</title>\n    <style>\n        body {\n            font-family: Arial, sans-serif;\n            display: flex;\n            flex-direction: column;\n            align-items: center;\n            justify-content: center;\n            height: 100vh;\n            background-color: #f4f4f4;\n        }\n        button {\n            padding: 10px 20px;\n            margin: 10px;\n            font-size: 18px;\n            border: none;\n            color: white;\n            border-radius: 5px;\n            cursor: pointer;\n        }\n        #start {\n            background-color: #28a745;\n        }\n        #stop {\n            background-color: #dc3545;\n        }\n        #start:hover {\n            background-color: #218838;\n        }\n        #stop:hover {\n            background-color: #c82333;\n        }\n    </style>\n</head>\n<body>\n    <h1>Load Game</h1>\n    <h3>AZ: us-west-2b</h3>\n    <div id=\"cpu-load\">Fetching CPU Load...</div>\n    <button id=\"start\" onclick=\"startStressTest()\">Start Stress Test</button>\n    <button id=\"stop\" onclick=\"stopStressTest()\">Stop Stress Test</button>\n    <script>\n        let timeout;\n        function startStressTest() {\n            fetch('/start-stress', { method: 'POST' })\n                .then(() => {\n                    alert('Stress test started, will stop automatically after 10 minutes.');\n                    timeout = setTimeout(stopStressTest, 10 * 60 * 1000); // 10 minutes timeout\n                })\n                .catch(error => alert('Error starting stress test: ' + error.message));\n        }\n\n        function stopStressTest() {\n            clearTimeout(timeout);\n            fetch('/stop-stress', { method: 'POST' })\n                .then(() => alert('Stress test stopped.'))\n                .catch(error => alert('Error stopping stress test: ' + error.message));\n        }\n\n        function fetchCpuLoad() {\n            fetch('/cpu-load')\n                .then(response => response.json())\n                .then(data => {\n                    document.getElementById('cpu-load').innerText = `Current CPU Load: ${data.cpuLoad}%`;\n                })\n                .catch(error => console.error('Error fetching CPU load:', error));\n        }\n\n        // Fetch CPU load every 5 seconds\n        setInterval(fetchCpuLoad, 5000);\n        fetchCpuLoad();\n    </script>\n</body>\n</html>",
+        "template": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Load Game</title>\n    <style>\n        body {\n            font-family: Arial, sans-serif;\n            display: flex;\n            flex-direction: column;\n            align-items: center;\n            justify-content: center;\n            height: 100vh;\n            background-color: #f4f4f4;\n        }\n        button {\n            padding: 10px 20px;\n            margin: 10px;\n            font-size: 18px;\n            border: none;\n            color: white;\n            border-radius: 5px;\n            cursor: pointer;\n        }\n        #start {\n            background-color: #28a745;\n        }\n        #stop {\n            background-color: #dc3545;\n        }\n        #start:hover {\n            background-color: #218838;\n        }\n        #stop:hover {\n            background-color: #c82333;\n        }\n    </style>\n</head>\n<body>\n    <h1>Load Game</h1>\n    <h3 id=\"az\">AZ:us-west-2b</h3>\n    <div id=\"cpu-load\">Fetching CPU Load...</div>\n    <button id=\"start\" onclick=\"startStressTest()\">Start Stress Test</button>\n    <button id=\"stop\" onclick=\"stopStressTest()\">Stop Stress Test</button>\n    <script>\n        let timeout;\n    function startStressTest() {\n        fetch('/start-stress', { method: 'POST' })\n            .then(() => {\n                console.log('Stress test started, will stop automatically after 10 minutes.');\n                timeout = setTimeout(stopStressTest, 10 * 60 * 1000); // 10 minutes timeout\n            })\n            .catch(error => console.log('Error starting stress test:', error.message));\n    }\n    function stopStressTest() {\n        clearTimeout(timeout);\n        fetch('/stop-stress', { method: 'POST' })\n            .then(() => console.log('Stress test stopped.'))\n            .catch(error => console.log('Error stopping stress test:', error.message));\n    }\n    function fetchCpuLoad() {\n        fetch('/cpu-load')\n            .then(response => response.json())\n            .then(data => {\n                document.getElementById('cpu-load').innerText = `Current CPU Load: ${data.cpuLoad}%`;\n            })\n            .catch(error => console.error('Error fetching CPU load:', error));\n    }\n    // Fetch CPU load every 5 seconds\n    setInterval(fetchCpuLoad, 5000);\n    fetchCpuLoad();\n\n    // Function to fetch metadata and update the page\n    function fetchMetadata() {\n    fetch('/ec2-metadata')\n        .then(response => response.json())\n        .then(data => {\n            if (data.availabilityZone) {\n                document.getElementById('az').innerText = `AZ: ${data.availabilityZone}`;\n            }\n            if (data.publicIp) {\n            document.getElementById('public-ip').innerText = `Public IP: ${data.publicIp}`;\n            }\n        })\n        .catch(error => {\n            console.error('Error fetching EC2 metadata:', error);\n        });\n    }\n    \n    // Fetch metadata on page load\n    fetchMetadata();\n    </script>\n</body>\n</html>",
         "x": 390,
         "y": 320,
         "wires": [
@@ -153,31 +153,11 @@
         "method": "get",
         "upload": false,
         "swaggerDoc": "",
-        "x": 170,
-        "y": 420,
+        "x": 150,
+        "y": 400,
         "wires": [
             [
-                "8fcdbab311bbc2e5"
-            ]
-        ]
-    },
-    {
-        "id": "8fcdbab311bbc2e5",
-        "type": "function",
-        "z": "1b4a4c28bfa23ee8",
-        "name": "Get CPU Load",
-        "func": "const os = global.get('os'); // Access the os module.\n\nfunction getCpuLoad() {\n    const cpus = os.cpus();\n    let idle = 0;\n    let total = 0;\n\n    for (let cpu of cpus) {\n        for (let type in cpu.times) {\n            total += cpu.times[type];\n        }\n        idle += cpu.times.idle;\n    }\n\n    return 100 - Math.round((idle / total) * 100);\n}\n\nmsg.payload = { cpuLoad: getCpuLoad() };\nreturn msg;",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 390,
-        "y": 420,
-        "wires": [
-            [
-                "eebf07e65c504234"
+                "exec-cpu-load"
             ]
         ]
     },
@@ -188,8 +168,8 @@
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 620,
-        "y": 420,
+        "x": 810,
+        "y": 400,
         "wires": []
     },
     {
@@ -201,7 +181,7 @@
         "method": "post",
         "upload": false,
         "swaggerDoc": "",
-        "x": 180,
+        "x": 130,
         "y": 560,
         "wires": [
             [
@@ -214,18 +194,45 @@
         "type": "function",
         "z": "1b4a4c28bfa23ee8",
         "name": "Start Stress Logic",
-        "func": "// Retrieve the stressTestRunning flag from the context\nlet stressTestRunning = context.get('stressTestRunning') || false;\n\nif (!stressTestRunning) {\n    // Set a status (optional, for debugging purposes in Node-RED)\n    node.status({ fill: \"green\", shape: \"dot\", text: \"Stress test running\" });\n\n    // Save the running state to the context\n    context.set('stressTestRunning', true);\n\n    // Schedule automatic stop after 10 minutes (600,000 ms)\n    setTimeout(() => {\n        context.set('stressTestRunning', false);\n        // Optionally, clear the node status\n        node.status({ fill: \"red\", shape: \"dot\", text: \"Stress test auto-stopped\" });\n    }, 10 * 60 * 1000); // 10 minutes\n    msg.payload = { status: \"Stress test started.\" };\n} else {\n    msg.payload = { status: \"Stress test is already running.\" };\n}\n\nreturn msg;",
+        "func": "// Save the running state to the context\ncontext.set('stressTestRunning', true);\n\n// Send the shell command to the exec node\nmsg.payload = \"stress --cpu 2 --io 2 --timeout 300s\";\nreturn msg;\n",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 410,
+        "x": 390,
         "y": 560,
         "wires": [
             [
+                "8b5422b55c7e874b"
+            ]
+        ]
+    },
+    {
+        "id": "8b5422b55c7e874b",
+        "type": "exec",
+        "z": "1b4a4c28bfa23ee8",
+        "command": "",
+        "addpay": "payload",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "Execute Stress Command",
+        "x": 630,
+        "y": 580,
+        "wires": [
+            [
+                "b21fe105abcd3f44",
                 "e74269b2fb167d4b"
+            ],
+            [
+                "111b47309fc5e94b"
+            ],
+            [
+                "e07428b5acf3eb6f"
             ]
         ]
     },
@@ -236,8 +243,59 @@
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 620,
-        "y": 560,
+        "x": 850,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "b21fe105abcd3f44",
+        "type": "debug",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "Command Output",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 880,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "111b47309fc5e94b",
+        "type": "debug",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "Command Errors",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 880,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "e07428b5acf3eb6f",
+        "type": "debug",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "Exit Code",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 880,
+        "y": 620,
         "wires": []
     },
     {
@@ -249,8 +307,8 @@
         "method": "post",
         "upload": false,
         "swaggerDoc": "",
-        "x": 180,
-        "y": 660,
+        "x": 140,
+        "y": 620,
         "wires": [
             [
                 "bf7c25828b495613"
@@ -262,7 +320,44 @@
         "type": "function",
         "z": "1b4a4c28bfa23ee8",
         "name": "Stop Stress Logic",
-        "func": "// Logic to stop the stress test\n\n// Set the stress test state as \"stopped\" in the context\ncontext.set('stressTestRunning', false);\n\n// Optionally, update the node status for debugging in the Node-RED editor\nnode.status({ fill: \"red\", shape: \"dot\", text: \"Stress test stopped\" });\n\n// Prepare the response message\nmsg.payload = { status: \"Stress test stopped.\" };\nreturn msg;",
+        "func": "// Kill the stress process by running 'pkill stress'\nmsg.payload = \"pkill stress\";\ncontext.set('stressTestRunning', false);\nnode.status({ fill: \"red\", shape: \"dot\", text: \"Stress command stopped\" });\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 620,
+        "wires": [
+            [
+                "8b5422b55c7e874b"
+            ]
+        ]
+    },
+    {
+        "id": "ec2-metadata",
+        "type": "http in",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "EC2 Metadata Endpoint",
+        "url": "/ec2-metadata",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 740,
+        "wires": [
+            [
+                "fetch-metadata"
+            ]
+        ]
+    },
+    {
+        "id": "fetch-metadata",
+        "type": "function",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "Get EC2 Metadata",
+        "func": "const http = require('http');\n\n// Function to fetch a token\nfunction fetchToken(callback) {\n    const options = {\n        hostname: '169.254.169.254',\n        port: 80,\n        path: '/latest/api/token',\n        method: 'PUT',\n        headers: {\n            'X-aws-ec2-metadata-token-ttl-seconds': '21600' // Token valid for 6 hours\n        }\n    };\n\n    const req = http.request(options, (res) => {\n        let token = '';\n\n        res.on('data', (chunk) => {\n            token += chunk;\n        });\n\n        res.on('end', () => {\n            callback(null, token);\n        });\n    });\n\n    req.on('error', (error) => {\n        callback(error);\n    });\n\n    req.end();\n}\n\n// Function to fetch metadata\nfunction fetchMetadata(path, token, callback) {\n    const options = {\n        hostname: '169.254.169.254',\n        port: 80,\n        path: `/latest/meta-data/${path}`,\n        method: 'GET',\n        headers: {\n            'X-aws-ec2-metadata-token': token\n        }\n    };\n\n    const req = http.request(options, (res) => {\n        let data = '';\n\n        res.on('data', (chunk) => {\n            data += chunk;\n        });\n\n        res.on('end', () => {\n            callback(null, data);\n        });\n    });\n\n    req.on('error', (error) => {\n        callback(error);\n    });\n\n    req.end();\n}\n\n// Fetch the token and metadata sequentially\nfetchToken((error, token) => {\n    if (error) {\n        node.error('Error fetching IMDSv2 token: ' + error.message);\n        msg.payload = { error: 'Failed to fetch metadata token' };\n        return node.send(msg);\n    }\n\n    // Fetch the availability zone\n    fetchMetadata('placement/availability-zone', token, (error, az) => {\n        if (error) {\n            node.error('Error fetching availability zone: ' + error.message);\n            msg.payload = { error: 'Failed to fetch availability zone' };\n            return node.send(msg);\n        }\n\n        // Fetch the public IP\n        fetchMetadata('public-ipv4', token, (error, ip) => {\n            if (error) {\n                node.error('Error fetching public IP: ' + error.message);\n                msg.payload = { error: 'Failed to fetch public IP' };\n                return node.send(msg);\n            }\n\n            // Send the metadata in the payload\n            msg.payload = {\n                availabilityZone: az,\n                publicIp: ip\n            };\n            node.send(msg);\n        });\n    });\n});",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -270,22 +365,64 @@
         "finalize": "",
         "libs": [],
         "x": 410,
-        "y": 660,
+        "y": 740,
         "wires": [
             [
-                "b922e87db66e4d3f"
+                "ec2-metadata-response"
             ]
         ]
     },
     {
-        "id": "b922e87db66e4d3f",
+        "id": "ec2-metadata-response",
         "type": "http response",
         "z": "1b4a4c28bfa23ee8",
         "name": "",
         "statusCode": "",
         "headers": {},
         "x": 620,
-        "y": 660,
+        "y": 740,
         "wires": []
+    },
+    {
+        "id": "exec-cpu-load",
+        "type": "exec",
+        "z": "1b4a4c28bfa23ee8",
+        "command": "top -bn1 | grep 'Cpu(s)' | sed 's/.*, *\\([0-9.]*\\)%* id.*/\\1/' | awk '{print 100 - $1}'",
+        "addpay": false,
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "Fetch CPU Load",
+        "x": 390,
+        "y": 400,
+        "wires": [
+            [
+                "format-cpu-response"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "format-cpu-response",
+        "type": "function",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "Format CPU Data",
+        "func": "msg.payload = {\n    cpuLoad: msg.payload.trim()\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 400,
+        "wires": [
+            [
+                "eebf07e65c504234"
+            ]
+        ]
     }
 ]

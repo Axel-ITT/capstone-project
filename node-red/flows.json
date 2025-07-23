@@ -153,31 +153,11 @@
         "method": "get",
         "upload": false,
         "swaggerDoc": "",
-        "x": 170,
-        "y": 420,
+        "x": 150,
+        "y": 400,
         "wires": [
             [
-                "8fcdbab311bbc2e5"
-            ]
-        ]
-    },
-    {
-        "id": "8fcdbab311bbc2e5",
-        "type": "function",
-        "z": "1b4a4c28bfa23ee8",
-        "name": "Get CPU Load",
-        "func": "const os = global.get('os'); // Access the os module.\n\nfunction getCpuLoad() {\n    const cpus = os.cpus();\n    let idle = 0;\n    let total = 0;\n\n    for (let cpu of cpus) {\n        for (let type in cpu.times) {\n            total += cpu.times[type];\n        }\n        idle += cpu.times.idle;\n    }\n\n    return 100 - Math.round((idle / total) * 100);\n}\n\nmsg.payload = { cpuLoad: getCpuLoad() };\nreturn msg;",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 390,
-        "y": 420,
-        "wires": [
-            [
-                "eebf07e65c504234"
+                "exec-cpu-load"
             ]
         ]
     },
@@ -188,8 +168,8 @@
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 620,
-        "y": 420,
+        "x": 810,
+        "y": 400,
         "wires": []
     },
     {
@@ -202,7 +182,7 @@
         "upload": false,
         "swaggerDoc": "",
         "x": 130,
-        "y": 500,
+        "y": 560,
         "wires": [
             [
                 "772367c4cdf6f775"
@@ -214,7 +194,7 @@
         "type": "function",
         "z": "1b4a4c28bfa23ee8",
         "name": "Start Stress Logic",
-        "func": "// Save the running state to the context\ncontext.set('stressTestRunning', true);\n\n// Send the shell command to the exec node\nmsg.payload = \"stress --cpu 2 --io 4 --timeout 30s\";\nreturn msg;\n",
+        "func": "// Save the running state to the context\ncontext.set('stressTestRunning', true);\n\n// Send the shell command to the exec node\nmsg.payload = \"stress --cpu 4 --io 4 --timeout 30s\";\nreturn msg;\n",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -222,7 +202,7 @@
         "finalize": "",
         "libs": [],
         "x": 390,
-        "y": 500,
+        "y": 560,
         "wires": [
             [
                 "8b5422b55c7e874b"
@@ -242,7 +222,7 @@
         "oldrc": false,
         "name": "Execute Stress Command",
         "x": 630,
-        "y": 520,
+        "y": 580,
         "wires": [
             [
                 "b21fe105abcd3f44",
@@ -264,7 +244,7 @@
         "statusCode": "",
         "headers": {},
         "x": 850,
-        "y": 440,
+        "y": 500,
         "wires": []
     },
     {
@@ -281,7 +261,7 @@
         "statusVal": "",
         "statusType": "auto",
         "x": 880,
-        "y": 480,
+        "y": 540,
         "wires": []
     },
     {
@@ -298,7 +278,7 @@
         "statusVal": "",
         "statusType": "auto",
         "x": 880,
-        "y": 520,
+        "y": 580,
         "wires": []
     },
     {
@@ -315,7 +295,7 @@
         "statusVal": "",
         "statusType": "auto",
         "x": 880,
-        "y": 560,
+        "y": 620,
         "wires": []
     },
     {
@@ -328,7 +308,7 @@
         "upload": false,
         "swaggerDoc": "",
         "x": 140,
-        "y": 560,
+        "y": 620,
         "wires": [
             [
                 "bf7c25828b495613"
@@ -348,7 +328,7 @@
         "finalize": "",
         "libs": [],
         "x": 390,
-        "y": 560,
+        "y": 620,
         "wires": [
             [
                 "8b5422b55c7e874b"
@@ -365,7 +345,7 @@
         "upload": false,
         "swaggerDoc": "",
         "x": 180,
-        "y": 720,
+        "y": 740,
         "wires": [
             [
                 "fetch-metadata"
@@ -377,12 +357,15 @@
         "type": "function",
         "z": "1b4a4c28bfa23ee8",
         "name": "Get EC2 Metadata",
-        "func": "const http = require('http');\n\nfunction fetchMetadata(path, callback) {\n    const options = {\n        hostname: '169.254.169.254',\n        port: 80,\n        path: `/latest/meta-data/${path}`,\n        method: 'GET',\n    };\n\n    const req = http.request(options, (res) => {\n        let data = '';\n\n        res.on('data', (chunk) => {\n            data += chunk;\n        });\n\n        res.on('end', () => {\n            callback(null, data);\n        });\n    });\n\n    req.on('error', (e) => {\n        callback(e);\n    });\n\n    req.end();\n}\n\nconst promises = [\n    new Promise((resolve) => fetchMetadata('placement/availability-zone', resolve)),\n    new Promise((resolve) => fetchMetadata('public-ipv4', resolve))\n];\n\nPromise.all(promises)\n    .then(([az, ip]) => {\n        msg.payload = {\n            availabilityZone: az,\n            publicIp: ip,\n        };\n        node.send(msg);\n    })\n    .catch((error) => {\n        msg.payload = { error: error.message };\n        node.send(msg);\n    });\n\nreturn null;",
+        "func": "const http = require('http');\n\n// Function to fetch a token\nfunction fetchToken(callback) {\n    const options = {\n        hostname: '169.254.169.254',\n        port: 80,\n        path: '/latest/api/token',\n        method: 'PUT',\n        headers: {\n            'X-aws-ec2-metadata-token-ttl-seconds': '21600' // Token valid for 6 hours\n        }\n    };\n\n    const req = http.request(options, (res) => {\n        let token = '';\n\n        res.on('data', (chunk) => {\n            token += chunk;\n        });\n\n        res.on('end', () => {\n            callback(null, token);\n        });\n    });\n\n    req.on('error', (error) => {\n        callback(error);\n    });\n\n    req.end();\n}\n\n// Function to fetch metadata\nfunction fetchMetadata(path, token, callback) {\n    const options = {\n        hostname: '169.254.169.254',\n        port: 80,\n        path: `/latest/meta-data/${path}`,\n        method: 'GET',\n        headers: {\n            'X-aws-ec2-metadata-token': token\n        }\n    };\n\n    const req = http.request(options, (res) => {\n        let data = '';\n\n        res.on('data', (chunk) => {\n            data += chunk;\n        });\n\n        res.on('end', () => {\n            callback(null, data);\n        });\n    });\n\n    req.on('error', (error) => {\n        callback(error);\n    });\n\n    req.end();\n}\n\n// Fetch the token and metadata sequentially\nfetchToken((error, token) => {\n    if (error) {\n        node.error('Error fetching IMDSv2 token: ' + error.message);\n        msg.payload = { error: 'Failed to fetch metadata token' };\n        return node.send(msg);\n    }\n\n    // Fetch the availability zone\n    fetchMetadata('placement/availability-zone', token, (error, az) => {\n        if (error) {\n            node.error('Error fetching availability zone: ' + error.message);\n            msg.payload = { error: 'Failed to fetch availability zone' };\n            return node.send(msg);\n        }\n\n        // Fetch the public IP\n        fetchMetadata('public-ipv4', token, (error, ip) => {\n            if (error) {\n                node.error('Error fetching public IP: ' + error.message);\n                msg.payload = { error: 'Failed to fetch public IP' };\n                return node.send(msg);\n            }\n\n            // Send the metadata in the payload\n            msg.payload = {\n                availabilityZone: az,\n                publicIp: ip\n            };\n            node.send(msg);\n        });\n    });\n});",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
         "x": 410,
-        "y": 720,
+        "y": 740,
         "wires": [
             [
                 "ec2-metadata-response"
@@ -397,7 +380,49 @@
         "statusCode": "",
         "headers": {},
         "x": 620,
-        "y": 720,
+        "y": 740,
         "wires": []
+    },
+    {
+        "id": "exec-cpu-load",
+        "type": "exec",
+        "z": "1b4a4c28bfa23ee8",
+        "command": "top -bn1 | grep 'Cpu(s)' | sed 's/.*, *\\([0-9.]*\\)%* id.*/\\1/' | awk '{print 100 - $1}'",
+        "addpay": false,
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "Fetch CPU Load",
+        "x": 390,
+        "y": 400,
+        "wires": [
+            [
+                "format-cpu-response"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "format-cpu-response",
+        "type": "function",
+        "z": "1b4a4c28bfa23ee8",
+        "name": "Format CPU Data",
+        "func": "msg.payload = {\n    cpuLoad: msg.payload.trim()\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 400,
+        "wires": [
+            [
+                "eebf07e65c504234"
+            ]
+        ]
     }
 ]
